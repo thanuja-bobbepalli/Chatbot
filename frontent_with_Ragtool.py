@@ -1,6 +1,5 @@
 import streamlit as st
 import uuid
-
 from backend_rag_tool import (
     chatbot,
     ingest_pdf,
@@ -11,11 +10,16 @@ from langchain_core.messages import HumanMessage,AIMessage,ToolMessage
 from langchain_huggingface import ChatHuggingFace,HuggingFaceEndpoint
 from dotenv import load_dotenv
 load_dotenv()
+import os
 
+st.write("HF:", os.getenv("HUGGINGFACEHUB_API_TOKEN") is not None)
+st.write("STOCK:", os.getenv("STOCK_PRICE_API") is not None)
 
+hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 llm = HuggingFaceEndpoint(
     repo_id="Qwen/Qwen2.5-7B-Instruct",
     task="text-generation",
+    huggingfacehub_api_token=hf_token 
 )
 llm= ChatHuggingFace(llm=llm)
 

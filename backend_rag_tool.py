@@ -27,11 +27,13 @@ import tempfile
 # **************************** Model ***************************
 load_dotenv()
 
+hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 llm = HuggingFaceEndpoint(
-        repo_id="Qwen/Qwen2.5-7B-Instruct",  
-    task="text-generation" 
+    repo_id="Qwen/Qwen2.5-7B-Instruct",
+    task="text-generation",
+    huggingfacehub_api_token=hf_token 
 )
-llm = ChatHuggingFace(llm=llm)
+llm= ChatHuggingFace(llm=llm)
 
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
