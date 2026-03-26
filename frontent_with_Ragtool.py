@@ -144,11 +144,18 @@ for thread in st.session_state['chat_threads'][::-1]:
 
         temp_messages = []
         for msg in messages:
-            role = 'user' if isinstance(msg, HumanMessage) else 'assistant'
-            temp_messages.append({'role': role, 'content': msg.content})
+            if isinstance(msg, HumanMessage):
+                temp_messages.append({'role': 'user', 'content': msg.content})
 
+            elif isinstance(msg, AIMessage):
+                #  skip tool-calling intermediate messages
+                if hasattr(msg, "tool_calls") and msg.tool_calls:
+                    continue
+
+                temp_messages.append({'role': 'assistant', 'content': msg.content})
+                
         st.session_state['message_history'] = temp_messages
-
+        
     # ✏️ Rename
     if col2.button("✏️", key=f"rename_btn_{thread['id']}", use_container_width=True):
         st.session_state[f"rename_mode_{thread['id']}"] = True
