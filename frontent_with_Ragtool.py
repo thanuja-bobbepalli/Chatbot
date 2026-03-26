@@ -191,7 +191,7 @@ st.title("Multi Utility Chatbot")
 # loading the conversation history
 for message in st.session_state['message_history']:
     with st.chat_message(message['role']):
-        st.text(message['content'])
+        st.markdown(message['content'])
         
 user_input = st.chat_input('Ask about your document or use tools')
 
@@ -290,8 +290,16 @@ if selected_thread:
 
     temp_messages = []
     for msg in messages:
-        role = "user" if isinstance(msg, HumanMessage) else "assistant"
-        temp_messages.append({"role": role, "content": msg.content})
+        if isinstance(msg, HumanMessage):
+            temp_messages.append({'role': 'user', 'content': msg.content})
+
+        elif isinstance(msg, AIMessage):
+            # 🚫 skip tool-calling intermediate messages
+            if hasattr(msg, "tool_calls") and msg.tool_calls:
+                continue
+
+            temp_messages.append({'role': 'assistant', 'content': msg.content})  
+
     st.session_state["message_history"] = temp_messages
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
     st.rerun()
